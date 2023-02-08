@@ -1,6 +1,6 @@
 A = 60;%Amplitude
 W = (5*pi)/6;%Temporal freq
-sigma = (2*pi)/3;%spacial freq
+sigma = (2*pi)/2;%spacial freq
 %Interesting when you divide the frequencies by different numbers
 tinitial = 2; %initial time step
 %number of motors can be changed to generate the point masses
@@ -20,4 +20,7 @@ for t= 1:length(tval);
     ylabel('theta')
     pause(.1)
 end
+
+
+
 
