@@ -56,7 +56,7 @@ for j=1:p
     mass_position(3,j)=(1/M)*sum(z_mass_i);
 
     %plotting x,y positions for each time step
-    plot(x_val,y_val)
+    plot3(x_val,y_val,z_val)
     xlim([0,2])
     pause(0.1)
 
