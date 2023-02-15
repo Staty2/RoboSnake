@@ -5,7 +5,7 @@ W = (5*pi)/6;
 sigma = (2*pi)/3;
 
 tinitial = 2;
-nval = linspace (0,1000, 1000);
+nval = linspace (0,100, 100);
 
 theta_atn = W.*A.*cos( W.*tinitial + nval.*sigma);
 
@@ -16,9 +16,10 @@ tval = linspace(1,100,100);
 
 for t= 1:length(tval);
     theta = W.*A.*cos( W.*tval(t) + nval.*sigma);
-    plot(nval,theta,'r-')
+    plot(nval,theta,'o')
     ylabel('theta-dot')
     xlabel('motor number')
 
     pause(.1)
+
 end
