@@ -56,7 +56,7 @@ for t = 0:dT:4
         vel_tangent = dot(velocity, tangent);
         vel_normal = dot(velocity, normal);
         
-        
+        velocity_COM = sum(velocity(1,:))/n
 
         % update position with velocity and friction force
         r(:, i) = pos;
