@@ -58,6 +58,8 @@ for j=1:p
     %plotting x,y positions for each time step
     plot3(x_val,y_val,z_val)
     xlim([0,2])
+    ylim([0,10])
+    zlim([0,0.5])
     pause(0.1)
 
     %changing start noded position adn thetas for new snake position
