@@ -41,11 +41,12 @@ for t = 0:dT:4
             pos = pos + l * [cos(sum(th(1:j))); sin(sum(th(1:j)))];
             [~, th_dot] = gait(j, n); % get the derivative of the gait for each segment
             velocity = velocity + l * [(cos(sum(th(1:j))) * th_dot); (sin(sum(th(1:j))) * th_dot)];
+            
         end
 
         % calculate unit tangent and normal vectors
         if i < length(r)
-            tangent = (r(:, i+1) - r(:, i)) / l
+            tangent = (r(:, i+1) - r(:, i)) / l;
             normal = [0, -1; 1, 0] * tangent;
         else
             tangent = [0; 0];
@@ -53,7 +54,7 @@ for t = 0:dT:4
         end
         
         % calculate tangential and normal components of velocity
-        vel_tangent = dot(velocity, tangent)
+        vel_tangent = dot(velocity, tangent);
         vel_normal = dot(velocity, normal);
         
         
@@ -94,5 +95,4 @@ function [th, th_dot] = gait(i, n)
     th = A * sin(W * t0 + n * sigma);
     th_dot = A * W * cos(W * t0 + n * sigma);
 end
-
 
