@@ -7,7 +7,8 @@ y0 = 0;
 
 n = 10;
 l = 10; % length of 1 segment
-mu = 0.3; % kinetic friction coefficient
+mu_n = 0.11;% kinetic friction coefficient
+mu_t = 0.2;
 
 r = zeros(2, n + 1); % position vectors
 r(:, 1) = [x0; y0]; % initial position
@@ -57,6 +58,10 @@ for t = 0:dT:4
         vel_tangent = dot(velocity, tangent);
         vel_normal = dot(velocity, normal);
         
+        %friction forces per time step
+        friction_normal = vel_normal.*(mu_n*n*l);
+        friction_tangent = vel_tangent.*(mu_t*n*l);
+     
         velocity_COM = sum(velocity(1,:))/n;
 
         % update position with velocity and friction force
@@ -72,7 +77,7 @@ for t = 0:dT:4
     for i = ceil(n/4):n
         snake(i, 2) = line([r(1, i), r(1, i+1)], [r(2, i), r(2, i+1)]);
     end
-
+    
     title('Time (seconds):',t)
 
     pause(dT);

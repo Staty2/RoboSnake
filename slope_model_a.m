@@ -70,14 +70,14 @@ for t = 0:dT:T
         %friction forces per time step
         friction_normal = vel_normal.*(mu_n*n*l);
         friction_tangent = vel_tangent.*(mu_t*n*l);
-        gravity_force = m %I have hit the point where my brain is confused by gravity so I am going to bed
+        
       
         %%not sure we need this section??%%
         velocity_COM = sum(velocity(1,:))/n;
 
         % update position with velocity and friction force
         r(:, i) = pos;
-        x = x + [velocity_COM;0]*dT;
+        x = x + [velocity_COM;0;0]*dT;
     end
 
     %this plots the snake
