@@ -2,13 +2,11 @@ close all;
 clc;
 clear;
 
-%%%%i don't know how to turn this into 3d plot, i was using plot3%%%%%%
-
 x0 = 0;
 y0 = 0;
 z0 = 0;
 
-z_velocity=10;
+z_velocity=2;
 
 n = 10;
 l = 10; % length of 1 segment
@@ -64,10 +62,10 @@ for t = 0:dT:4
         % calculate unit tangent and normal vectors
         if i < length(r)
             tangent = (r(:, i+1) - r(:, i)) / l;
-            normal = [0, -1; 1, 0] * tangent;
+            normal = [0, -1, 0; 1, 0, 0; 0, 0, 1] * tangent;
         else
-            tangent = [0; 0];
-            normal = [0; 0];
+            tangent = [0; 0; 0];
+            normal = [0; 0; 0];
         end
         
         % calculate tangential and normal components of velocity
@@ -85,9 +83,10 @@ for t = 0:dT:4
         % calculate net force and acceleration
         F_net = propulsive - friction_tangent * tangent - friction_normal * normal;
         
-        % calculate the velocity of the center of mass (COM)
-        a_COM = (friction_tangent * tangent + friction_normal * normal) / (n * l);
-        velocity_COM = a_COM .* l .* [cos(cumsum(th)); sin(cumsum(th))] .* dT;
+       % calculate the velocity of the center of mass (COM)
+       a_COM = (friction_tangent * tangent + friction_normal * normal) / (n * l);
+       velocity_COM = a_COM .* l .* [cos(cumsum(th)), sin(cumsum(th)), 0] .* dT;
+
 
         % update position with velocity and friction force
         r(:, i) = pos(:,1);

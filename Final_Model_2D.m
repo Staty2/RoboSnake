@@ -5,8 +5,8 @@ clear;
 x0 = 0;
 y0 = 0;
 
-n = 10; %meters
-l = 10; % length of 1 segment
+n = 10; % number of links in centimeters (cm)
+l = 10; % length of 1 segment (cm)
 mu_n = 0.11; %normal coefficient of friction
 mu_t = 0.2; %tangent coefficient of friction
 
