@@ -14,7 +14,6 @@ n = 10;
 l = 10; % length of 1 segment
 mu_n = 0.11; %  normal kinetic friction coefficient
 mu_t = 0.2; %  tangential kinetic friction coefficient
-alpha = (5*pi)/180;
 T=4;
 
 r = zeros(3, n + 1); % position vectors

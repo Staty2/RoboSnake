@@ -5,10 +5,10 @@ clear;
 x0 = 0;
 y0 = 0;
 
-n = 10;
-l = 5; % length of 1 segment
-mu_n = 0.11; % kinetic friction coefficient
-mu_t = 0.2;
+n = 10; %meters
+l = 10; % length of 1 segment
+mu_n = 0.11; %normal coefficient of friction
+mu_t = 0.2; %tangent coefficient of friction
 
 r = zeros(2, n + 1); % position vectors
 r(:, 1) = [x0; y0]; % initial position
@@ -17,7 +17,7 @@ r(:, 1) = [x0; y0]; % initial position
 figure();
 hold on;
 grid on;
-axis([0, 200, -100, 100]);
+axis([0, 300, -150, 150]);
 ylabel('snake moving in y direction')
 xlabel('snake moving in x direction')
 
@@ -27,7 +27,6 @@ a = n;
 x = [0; 0];
 
 alpha = 0.2;
-beta = 0.4;
 
 for i = 1:length(th) % for each segment in the snake
     [th(i), ~] = gait(i, n); % using the gait function to find angles, ignore the second output
@@ -45,11 +44,8 @@ for t = 0:dT:4
             velocity = velocity + l * [(cos(sum(th(1:j))) * th_dot); (sin(sum(th(1:j))) * th_dot)];
             
             % calculate propulsive force
-            if j == i-1
-                alpha_j = alpha + (j-1) * (beta-alpha) / (n-2);
-                propulsive = propulsive + alpha_j * l * th_dot * [cos(sum(th(1:j))); sin(sum(th(1:j)))];
-            end
-
+            propulsive = propulsive + alpha * l * th_dot * [cos(sum(th(1:j))); sin(sum(th(1:j)))];
+     
         end
 
         % calculate unit tangent and normal vectors
