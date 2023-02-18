@@ -2,32 +2,46 @@ close all;
 clc;
 clear;
 
-%%%%i don't know how to turn this into 3d plot, i was using plot3%%%%%%
-
 x0 = 0;
 y0 = 0;
 z0 = 0;
 
 z_velocity=2;
 
-n = 10;
-l = 10; % length of 1 segment
-mu_n = 0.11; %  normal kinetic friction coefficient
-mu_t = 0.2; %  tangential kinetic friction coefficient
-T=4;
+incline = 60; %degrees
+slope_height = 0;
+
+n = 10; % number of links in centimeters (cm)
+l = 10; % length of 1 segment (cm)
+mu_n = 0.11*cosd(incline); %normal coefficient of friction
+mu_t = 0.2*cosd(incline); %tangent coefficient of friction
+T = 4;
+M = 1; %total mass
+m = M/n; %mass of individual link
+g = 10;
+
+r = zeros(2, n + 1); % position vectors
+r(:, 1) = [x0; y0]; % initial position
+
 
 r = zeros(3, n + 1); % position vectors
 r(:, 1) = [x0; y0; z0]; % initial position
 
 % making the graph
 figure();
+
+%lotting the plane
+x = [0, 300, 300, 0];
+y = [-150, -150, 150, 150];
+z = tand(incline) * x;
+patch(x, y, z, [0.4660 0.6740 0.1880]);
+
 hold on;
 grid on;
-axis([0, 200, -100, 100, 0, 200]);
-
-ylabel('snake moving in y direction')
-xlabel('snake moving in x direction')
-zlabel('snake moving in z direction')
+axis([0, 300, -150, 150, 0, 300]);
+xlabel('x')
+ylabel('y')
+zlabel('z')
 
 dT = 0.1;
 th = zeros(1, n); % angles for each segment
@@ -36,7 +50,6 @@ x = [0;0;0];
 
 
 alpha = 0.2;
-beta = 0.4;
 
 for i = 1:length(th) % for each segment in the snake
     [th(i), ~] = gait(i, n); % using the gait function to find angles, ignore the second output
@@ -49,15 +62,12 @@ for t = 0:dT:4
         propulsive = [0; 0; 0];
 
         for j = 2:i-1
-            pos = pos + l * [cos(sum(th(1:j))); sin(sum(th(1:j))); 0];
+            pos = pos + l * [cos(sum(th(1:j))); sin(sum(th(1:j))); tand(incline)];
             [~, th_dot] = gait(j, n); % get the derivative of the gait for each segment
             velocity = velocity + l * [(cos(sum(th(1:j))) * th_dot); (sin(sum(th(1:j))) * th_dot); 0];
             
             % calculate propulsive force
-            if j == i-1
-                alpha_j = alpha + (j-1) * (beta-alpha) / (n-2);
-                propulsive = propulsive + alpha_j * l * th_dot * [cos(sum(th(1:j))); sin(sum(th(1:j))); 0];
-            end
+            propulsive = propulsive + alpha * l * th_dot * [cos(sum(th(1:j))); sin(sum(th(1:j)));0];
 
         end
 
@@ -79,16 +89,14 @@ for t = 0:dT:4
         prop_normal = dot(propulsive, normal);
         
         % calculate friction forces per time step
-        friction_normal = vel_normal * (mu_n * n * l);
-        friction_tangent = vel_tangent * (mu_t * n * l);
-        
+        friction_normal = vel_normal * (mu_n * m * g);
+        friction_tangent = vel_tangent * (mu_t * m * g);
+
         % calculate net force and acceleration
         F_net = propulsive - friction_tangent * tangent - friction_normal * normal;
-        
-       % calculate the velocity of the center of mass (COM)
-       a_COM = (friction_tangent * tangent + friction_normal * normal) / (n * l);
-       velocity_COM = a_COM .* l .* [cos(cumsum(th)), sin(cumsum(th)), 0] .* dT;
-
+        % calculate the velocity of the center of mass (COM)
+        a_COM = (friction_tangent * tangent + friction_normal * normal) / M;
+        velocity_COM = a_COM .* l .* [cos(cumsum(th)); sin(cumsum(th)); ones(1,n)] .* dT;
 
         % update position with velocity and friction force
         r(:, i) = pos(:,1);
@@ -97,16 +105,18 @@ for t = 0:dT:4
 
     %this plots the snake
     %%%%%%not sure not plotting +not getting 3d axes. Pretty sure i've checked all the documentation for all the graph stuff and should be fine%%%%%%
-    snake = zeros(n, 3);
+        
+    % Plot the snake
+        snake = zeros(n, 3);
     for i = 1:n-1
-        snake(i, 1) = line([r(1, i), r(1, i+1)], [r(2, i), r(2, i+1)], [r(3, i), r(3, i+1)]);
+        snake(i, 1) = plot3([r(1, i), r(1, i+1)], [r(2, i), r(2, i+1)], [r(3, i), r(3, i+1)],'r');
     end
     for i = ceil(n/4):n
-        snake(i, 2) = line([r(1, i), r(1, i+1)], [r(2, i), r(2, i+1)], [r(3, i), r(3, i+1)]);
+        snake(i, 2) = plot3([r(1, i), r(1, i+1)], [r(2, i), r(2, i+1)], [r(3, i), r(3, i+1)],'r');
     end
+    view(3); % set the viewing angle to 3D
 
     title('Time (seconds):',t)
-    snake.Linestyle
 
     pause(dT);
     delete(snake);
