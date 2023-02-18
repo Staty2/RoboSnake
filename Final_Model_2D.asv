@@ -14,19 +14,18 @@ r = zeros(2, n + 1); % position vectors
 r(:, 1) = [x0; y0]; % initial position
 
 % making the graph
-figure(1);
+figure();
 hold on;
 grid on;
 axis([0, 300, -150, 150]);
-xlabel('x')
-ylabel('y')
+ylabel('x')
+xlabel('y')
 
 dT = 0.1;
 th = zeros(1, n); % angles for each segment
 a = n;
 x = [0; 0];
 V_list = [];
-time_list = [];
 
 alpha = 0.2;
 
@@ -81,10 +80,9 @@ for t = 0:dT:4
         % update position with velocity and friction force
         r(:, i) = pos(:,1);
         x = x + velocity_COM;
-
         if i == n/2
-            V_list = [V_list norm(velocity_COM(:,5))];
-            time_list = [time_list t];
+            V_list = [V_list velocity_COM];
+            time_list = [time_list t]
         end
 
     end
@@ -111,12 +109,6 @@ for t = 0:dT:4
     [th(n), ~] = gait(a, n); % update the last angle using the gait function
 end
 
-%Plot velocity time graph of a point
-figure(2);
-plot(time_list,V_list)
-xlabel('Time (s)')
-ylabel('Velocity (m/s)')
-
 function [th, th_dot] = gait(i, n)
     A = pi / 6; % maximum angle for a segment
     W = pi/5; % temporal freq (oscillations per sec)
@@ -126,5 +118,4 @@ function [th, th_dot] = gait(i, n)
     th = A * sin(W * t0 + n * sigma);
     th_dot = A * W * cos(W * t0 + n * sigma);
 end
-
 
