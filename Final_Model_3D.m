@@ -6,19 +6,28 @@ x0 = 0;
 y0 = 0;
 z0 = 0;
 
-z_velocity=2;
-
-incline = 30; %degrees
-slope_height = 0;
-
 n = 10; % number of links in centimeters (cm)
 l = 10; % length of 1 segment (cm)
-mu_n = 0.11*cosd(incline); %normal coefficient of friction
-mu_t = 0.2*cosd(incline); %tangent coefficient of friction
+mu_n = 0.11; %normal coefficient of friction
+mu_t = 0.2; %tangent coefficient of friction
 T = 4;
-M = 1; %total mass
-m = M/n; %mass of individual link
-g = 10;
+
+
+incline = 30; %degrees
+mu_s = 0.5; % coefficient of static friction between the snake and the slope
+theta_max = atan(mu_s); % maximum slope angle in radians
+m = 1; % mass of each rod
+g = 9.81; % gravitational acceleration
+Weight = [0; 0; -m*g*n]; % weight of the snake in N, assuming n rods
+M = n*m;
+
+theta_slope = 0.2; % slope angle in radians
+N = m*g*n*cos(theta_slope); % normal force exerted by the slope on the snake in N
+
+
+
+V_list = [];
+time_list = [];
 
 r = zeros(2, n + 1); % position vectors
 r(:, 1) = [x0; y0]; % initial position
@@ -30,11 +39,12 @@ r(:, 1) = [x0; y0; z0]; % initial position
 % making the graph
 figure();
 
-%lotting the plane
+%plotting the plane
 x = [0, 300, 300, 0];
 y = [-150, -150, 150, 150];
 z = tand(incline) * x;
-patch(x, y, z, [0.4660 0.6740 0.1880]);
+patch(x, y, z, [0.4660 0.6740 0.1880])
+
 
 hold on;
 grid on;
@@ -91,16 +101,28 @@ for t = 0:dT:4
         % calculate friction forces per time step
         friction_normal = vel_normal * (mu_n * m * g);
         friction_tangent = vel_tangent * (mu_t * m * g);
+        
+        if theta_slope <= theta_max % if the slope angle is smaller than or equal to the maximum slope angle
+            % calculate net force and acceleration
+            F_net = propulsive - friction_tangent * tangent - friction_normal * normal + Weight;
+            a_COM = (friction_tangent * tangent + friction_normal * normal) / M;
+            velocity_COM = a_COM .* l .* [cos(cumsum(th)); sin(cumsum(th)); ones(1,n)] .* dT;
+        
+            % update position with velocity and friction force
+            r(:, i) = pos(:,1);
+            x = x + velocity_COM;
+        else % if the slope angle is greater than the maximum slope angle
+            % the snake cannot pull itself forward along the slope
+            disp('The snake cannot pull itself forward along the slope.');
+        end
 
-        % calculate net force and acceleration
-        F_net = propulsive - friction_tangent * tangent - friction_normal * normal - (M * g * sind(incline));
-        % calculate the velocity of the center of mass (COM)
-        a_COM = (friction_tangent * tangent + friction_normal * normal) / M;
-        velocity_COM = a_COM .* l .* [cos(cumsum(th)); sin(cumsum(th)); ones(1,n)] .* dT;
 
-        % update position with velocity and friction force
-        r(:, i) = pos(:,1);
-        x = x + velocity_COM;
+
+        if i == n/2
+            V_list = [V_list norm(velocity_COM(:,end))];
+            time_list = [time_list t];
+        end
+
     end
 
     %this plots the snake
@@ -130,6 +152,14 @@ end
 
 %%%%%%V=(pos(2, end)-y0)/T
 
+%Plot velocity time graph of a point
+figure(2);
+plot(time_list,V_list)
+xlabel('Time (s)')
+ylabel('Velocity (m/s)')
+
+V_list'
+
 function [th, th_dot] = gait(i, n)
     A = pi / 6; % maximum angle for a segment
     W = pi/5; % temporal freq (oscillations per sec)
@@ -139,4 +169,5 @@ function [th, th_dot] = gait(i, n)
     th = A * sin(W * t0 + n * sigma);
     th_dot = A * W * cos(W * t0 + n * sigma);
 end
+
 

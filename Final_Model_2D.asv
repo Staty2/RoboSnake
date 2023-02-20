@@ -72,7 +72,7 @@ for t = 0:dT:4
         friction_tangent = vel_tangent * (mu_t * n * l);
         
         % calculate net force and acceleration
-        F_net = propulsive - friction_tangent * tangent - friction_normal * normal;
+        F_net = propulsive - abs(friction_tangent) * cos() - friction_normal * normal;
         
         % calculate the velocity of the center of mass (COM)
         a_COM = (friction_tangent * tangent + friction_normal * normal) / (n * l);
