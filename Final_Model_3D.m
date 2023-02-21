@@ -104,7 +104,7 @@ for t = 0:dT:4
         
         if theta_slope <= theta_max % if the slope angle is smaller than or equal to the maximum slope angle
             % calculate net force and acceleration
-            F_net = propulsive - friction_tangent * tangent - friction_normal * normal + Weight;
+            F_net = propulsive - friction_tangent * tangent - friction_normal * normal + Weight*sind(incline);
             a_COM = (friction_tangent * tangent + friction_normal * normal) / M;
             velocity_COM = a_COM .* l .* [cos(cumsum(th)); sin(cumsum(th)); ones(1,n)] .* dT;
         
